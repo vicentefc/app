@@ -7,7 +7,7 @@ from prophet import Prophet
 st.set_page_config(
     layout="wide",
     page_title="Análisis de Indicadores de Desarrollo Socioeconómico",
-    page_icon="📊"
+    page_icon="🍆💦"
 )
 
 st.title("Análisis de Indicadores de Desarrollo Socioeconómico")
