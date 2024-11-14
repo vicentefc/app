@@ -80,6 +80,6 @@ st.sidebar.subheader("Exportar")
 if st.sidebar.button("Exportar datos a CSV"):
     datos_filtrados.to_csv(f"{pais_seleccionado}_{indicador_seleccionado}.csv", index=False)
     st.sidebar.success("Datos exportados exitosamente.")
-if st.sidebar.button("Exportar gr谩fico a PNG"):
+if st.sidebar.button("Exportar gráfico a PNG"):
     fig.write_image(f"{pais_seleccionado}_{indicador_seleccionado}.png")
-    st.sidebar.success("Gr谩fico exportado exitosamente.")
+    st.sidebar.success("Gráfico exportado exitosamente.")
