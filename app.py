@@ -28,7 +28,7 @@ def obtener_datos(indicador, fecha_inicio, fecha_fin):
             {
                 'Pais': entrada['country']['value'] if isinstance(entrada['country'], dict) else entrada['country'],
                 'Codigo': entrada['countryiso3code'],
-                'Año': entrada['date'],
+                'Ano': entrada['date'],
                 'Valor': entrada['value']
             }
             for entrada in data if entrada['value'] is not None
@@ -44,7 +44,7 @@ df_vida = obtener_datos('SP.DYN.LE00.IN', 2000, 2020)
 if df_pib is not None and df_vida is not None:
     df_pib['Ano'] = df_pib['Ano'].astype(int)
     df_pib['Valor'] = df_pib['Valor'].astype(float)
-    df_vida['Ano'] = df_vida['Ano'].astype(int)
+    df_vida['Año'] = df_vida['Ano'].astype(int)
     df_vida['Valor'] = df_vida['Valor'].astype(float)
 else:
     st.stop()
@@ -60,8 +60,7 @@ datos_filtrados = df[df['Pais'] == pais_seleccionado]
 st.subheader(f"{indicador_seleccionado} en {pais_seleccionado} (2000 - 2020)")
 fig = px.line(datos_filtrados, x="Ano", y="Valor", title=f"{indicador_seleccionado} en {pais_seleccionado}", labels={"Valor": "Valor en USD" if indicador_seleccionado == "PIB per cápita" else "Esperanza de Vida en años"})
 fig.update_traces(mode="lines+markers")
-fig.update_layout(showlegend=False)  # Eliminar leyenda
-st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})  # Ocultar barra de herramientas
+st.plotly_chart(fig)
 
 if prediccion_habilitada:
     st.subheader(f"Predicción de tendencia para {indicador_seleccionado} en {pais_seleccionado}")
@@ -72,10 +71,12 @@ if prediccion_habilitada:
     prediccion = modelo.predict(futuro)
     fig_pred = px.line(prediccion, x="ds", y="yhat", title=f"Predicción de {indicador_seleccionado} en {pais_seleccionado} (hasta 2025)")
     fig_pred.add_scatter(x=datos_filtrados_pred['ds'], y=datos_filtrados_pred['y'], mode="markers", name="Datos reales")
-    fig_pred.update_layout(showlegend=False)  # Eliminar leyenda
-    st.plotly_chart(fig_pred, use_container_width=True, config={'displayModeBar': False})  # Ocultar barra de herramientas
+    st.plotly_chart(fig_pred)
 
 st.sidebar.subheader("Exportar")
 if st.sidebar.button("Exportar datos a CSV"):
     datos_filtrados.to_csv(f"{pais_seleccionado}_{indicador_seleccionado}.csv", index=False)
     st.sidebar.success("Datos exportados exitosamente.")
+if st.sidebar.button("Exportar gráfico a PNG"):
+    fig.write_image(f"{pais_seleccionado}_{indicador_seleccionado}.png")
+    st.sidebar.success("Gráfico exportado exitosamente.")
