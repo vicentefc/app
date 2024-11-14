@@ -24,11 +24,14 @@ def obtener_datos(indicador, fecha_inicio, fecha_fin):
     response = requests.get(url, params=params)
     if response.status_code == 200:
         data = response.json()[1]
+        if not data:
+            st.error(f"No se encontraron datos para el indicador {indicador}.")
+            return pd.DataFrame()
         datos_limpios = [
             {
                 'Pais': entrada['country']['value'] if isinstance(entrada['country'], dict) else entrada['country'],
                 'Codigo': entrada['countryiso3code'],
-                'Ano': entrada['date'],
+                'Año': entrada['date'],
                 'Valor': entrada['value']
             }
             for entrada in data if entrada['value'] is not None
@@ -41,10 +44,10 @@ def obtener_datos(indicador, fecha_inicio, fecha_fin):
 df_pib = obtener_datos('NY.GDP.PCAP.CD', 2000, 2020)
 df_vida = obtener_datos('SP.DYN.LE00.IN', 2000, 2020)
 
-if df_pib is not None and df_vida is not None:
-    df_pib['Ano'] = df_pib['Ano'].astype(int)
+if df_pib is not None and not df_pib.empty and df_vida is not None and not df_vida.empty:
+    df_pib['Año'] = df_pib['Año'].astype(int)
     df_pib['Valor'] = df_pib['Valor'].astype(float)
-    df_vida['Año'] = df_vida['Ano'].astype(int)
+    df_vida['Año'] = df_vida['Año'].astype(int)
     df_vida['Valor'] = df_vida['Valor'].astype(float)
 else:
     st.stop()
@@ -58,13 +61,13 @@ df = df_pib if indicador_seleccionado == "PIB per cápita" else df_vida
 datos_filtrados = df[df['Pais'] == pais_seleccionado]
 
 st.subheader(f"{indicador_seleccionado} en {pais_seleccionado} (2000 - 2020)")
-fig = px.line(datos_filtrados, x="Ano", y="Valor", title=f"{indicador_seleccionado} en {pais_seleccionado}", labels={"Valor": "Valor en USD" if indicador_seleccionado == "PIB per cápita" else "Esperanza de Vida en años"})
+fig = px.line(datos_filtrados, x="Año", y="Valor", title=f"{indicador_seleccionado} en {pais_seleccionado}", labels={"Valor": "Valor en USD" if indicador_seleccionado == "PIB per cápita" else "Esperanza de Vida en años"})
 fig.update_traces(mode="lines+markers")
 st.plotly_chart(fig)
 
 if prediccion_habilitada:
     st.subheader(f"Predicción de tendencia para {indicador_seleccionado} en {pais_seleccionado}")
-    datos_filtrados_pred = datos_filtrados[['Ano', 'Valor']].rename(columns={'Ano': 'ds', 'Valor': 'y'})
+    datos_filtrados_pred = datos_filtrados[['Año', 'Valor']].rename(columns={'Año': 'ds', 'Valor': 'y'})
     modelo = Prophet()
     modelo.fit(datos_filtrados_pred)
     futuro = modelo.make_future_dataframe(periods=5, freq='Y')
