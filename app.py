@@ -60,7 +60,7 @@ datos_filtrados = df[df['Pais'] == pais_seleccionado]
 st.subheader(f"{indicador_seleccionado} en {pais_seleccionado} (2000 - 2020)")
 fig = px.line(datos_filtrados, x="Ano", y="Valor", title=f"{indicador_seleccionado} en {pais_seleccionado}", labels={"Valor": "Valor en USD" if indicador_seleccionado == "PIB per cápita" else "Esperanza de Vida en años"})
 fig.update_traces(mode="lines+markers")
-fig.update_layout(showlegend=False, dragmode=False)  # Eliminar opciones de zoom y leyenda
+fig.update_layout(showlegend=False, dragmode=False) 
 st.plotly_chart(fig, use_container_width=True)
 
 if prediccion_habilitada:
@@ -72,7 +72,7 @@ if prediccion_habilitada:
     prediccion = modelo.predict(futuro)
     fig_pred = px.line(prediccion, x="ds", y="yhat", title=f"Predicción de {indicador_seleccionado} en {pais_seleccionado} (hasta 2025)")
     fig_pred.add_scatter(x=datos_filtrados_pred['ds'], y=datos_filtrados_pred['y'], mode="markers", name="Datos reales")
-    fig_pred.update_layout(showlegend=False, dragmode=False)  # Eliminar opciones de zoom y leyenda
+    fig_pred.update_layout(showlegend=False, dragmode=False)  
     st.plotly_chart(fig_pred, use_container_width=True)
 
 st.sidebar.subheader("Exportar")
