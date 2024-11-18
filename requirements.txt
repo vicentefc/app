@@ -6,3 +6,5 @@ prophet
 folium
 streamlit-folium
 kaleido
+psutil
+orca
