@@ -67,11 +67,9 @@ if prediccion_habilitada:
     fig_pred.add_scatter(x=datos_filtrados_pred['ds'], y=datos_filtrados_pred['y'], mode="markers", name="Datos reales")
     st.plotly_chart(fig_pred)
 
-# Mapa Regional
 st.subheader("Mapa de Calor: Comparación Regional")
 año_seleccionado = st.slider("Seleccione un año", min_value=rango_inicio, max_value=rango_fin, value=2020)
 
-# Generamos el mapa sin necesidad de un botón
 df_anual = df[df['Año'] == str(año_seleccionado)]
 coordenadas_url = cargar_coordenadas_paises()
 
@@ -88,8 +86,10 @@ for _, row in df_anual.iterrows():
 st.subheader("Mapa de Calor")
 st_folium(m, width=700)
 
-# Opciones de exportación
 st.sidebar.subheader("Exportar")
 if st.sidebar.button("Exportar datos a CSV"):
     datos_filtrados.to_csv(f"{pais_seleccionado}_{indicador_seleccionado}.csv", index=False)
     st.sidebar.success("Datos exportados exitosamente.")
+if st.sidebar.button("Exportar gráfico a PNG"):
+    fig.write_image(f"{pais_seleccionado}_{indicador_seleccionado}.png")
+    st.sidebar.success("Gráfico exportado exitosamente.")
