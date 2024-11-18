@@ -69,20 +69,24 @@ if prediccion_habilitada:
 
 st.subheader("Mapa de Calor: Comparación Regional")
 año_seleccionado = st.slider("Seleccione un año", min_value=rango_inicio, max_value=rango_fin, value=2020)
-df_anual = df[df['Año'] == str(año_seleccionado)]
 
-coordenadas_url = cargar_coordenadas_paises()
 
-m = folium.Map(location=[0, 0], zoom_start=2)
-for _, row in df_anual.iterrows():
-    folium.CircleMarker(
-        location=[row.get('lat', 0), row.get('lon', 0)],
-        radius=5,
-        popup=f"{row['Pais']}: {row['Valor']}",
-        color="blue",
-        fill=True
-    ).add_to(m)
-st_folium(m, width=700)
+mostrar_mapa = st.button("Mostrar Mapa Regional")
+
+if mostrar_mapa:
+    df_anual = df[df['Año'] == str(año_seleccionado)]
+    coordenadas_url = cargar_coordenadas_paises()
+
+    m = folium.Map(location=[0, 0], zoom_start=2)
+    for _, row in df_anual.iterrows():
+        folium.CircleMarker(
+            location=[row.get('lat', 0), row.get('lon', 0)],
+            radius=5,
+            popup=f"{row['Pais']}: {row['Valor']}",
+            color="blue",
+            fill=True
+        ).add_to(m)
+    st_folium(m, width=700)
 
 st.sidebar.subheader("Exportar")
 if st.sidebar.button("Exportar datos a CSV"):
