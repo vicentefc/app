@@ -67,10 +67,14 @@ if prediccion_habilitada:
     fig_pred.add_scatter(x=datos_filtrados_pred['ds'], y=datos_filtrados_pred['y'], mode="markers", name="Datos reales")
     st.plotly_chart(fig_pred)
 
+# Mapa Regional
 st.subheader("Mapa de Calor: Comparación Regional")
 año_seleccionado = st.slider("Seleccione un año", min_value=rango_inicio, max_value=rango_fin, value=2020)
 
+# Creamos un contenedor vacío para el mapa
+mapa_contenedor = st.empty()
 
+# Condición para mostrar el mapa solo cuando se presiona el botón
 mostrar_mapa = st.button("Mostrar Mapa Regional")
 
 if mostrar_mapa:
@@ -86,8 +90,10 @@ if mostrar_mapa:
             color="blue",
             fill=True
         ).add_to(m)
+    mapa_contenedor.subheader("Mapa de Calor")
     st_folium(m, width=700)
 
+# Opciones de exportación
 st.sidebar.subheader("Exportar")
 if st.sidebar.button("Exportar datos a CSV"):
     datos_filtrados.to_csv(f"{pais_seleccionado}_{indicador_seleccionado}.csv", index=False)
