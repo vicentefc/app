@@ -5,6 +5,7 @@ import plotly.express as px
 from prophet import Prophet
 import folium
 from streamlit_folium import st_folium
+import kaleido
 
 st.set_page_config(layout="wide", page_title="Análisis de Indicadores de Desarrollo Socioeconómico", page_icon="🌍")
 
