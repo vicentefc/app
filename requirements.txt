@@ -5,3 +5,4 @@ plotly
 prophet
 folium
 streamlit-folium
+kaleido
