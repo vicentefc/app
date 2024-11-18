@@ -1,6 +1,7 @@
 streamlit
-plotly
-pandas
-prophet  
 requests
+pandas
+plotly
+prophet
 folium
+streamlit-folium
