@@ -67,33 +67,23 @@ if prediccion_habilitada:
     fig_pred.add_scatter(x=datos_filtrados_pred['ds'], y=datos_filtrados_pred['y'], mode="markers", name="Datos reales")
     st.plotly_chart(fig_pred)
 
-# Mapa Regional
 st.subheader("Mapa de Calor: Comparación Regional")
 año_seleccionado = st.slider("Seleccione un año", min_value=rango_inicio, max_value=rango_fin, value=2020)
+df_anual = df[df['Año'] == str(año_seleccionado)]
 
-# Creamos un contenedor vacío para el mapa
-mapa_contenedor = st.empty()
+coordenadas_url = cargar_coordenadas_paises()
 
-# Condición para mostrar el mapa solo cuando se presiona el botón
-mostrar_mapa = st.button("Mostrar Mapa Regional")
+m = folium.Map(location=[0, 0], zoom_start=2)
+for _, row in df_anual.iterrows():
+    folium.CircleMarker(
+        location=[row.get('lat', 0), row.get('lon', 0)],
+        radius=5,
+        popup=f"{row['Pais']}: {row['Valor']}",
+        color="blue",
+        fill=True
+    ).add_to(m)
+st_folium(m, width=700)
 
-if mostrar_mapa:
-    df_anual = df[df['Año'] == str(año_seleccionado)]
-    coordenadas_url = cargar_coordenadas_paises()
-
-    m = folium.Map(location=[0, 0], zoom_start=2)
-    for _, row in df_anual.iterrows():
-        folium.CircleMarker(
-            location=[row.get('lat', 0), row.get('lon', 0)],
-            radius=5,
-            popup=f"{row['Pais']}: {row['Valor']}",
-            color="blue",
-            fill=True
-        ).add_to(m)
-    mapa_contenedor.subheader("Mapa de Calor")
-    st_folium(m, width=700)
-
-# Opciones de exportación
 st.sidebar.subheader("Exportar")
 if st.sidebar.button("Exportar datos a CSV"):
     datos_filtrados.to_csv(f"{pais_seleccionado}_{indicador_seleccionado}.csv", index=False)
